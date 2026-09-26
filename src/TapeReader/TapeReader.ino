@@ -10,15 +10,23 @@
 /**
  * Configurable constants.
  */
-const uint8_t feedInterrupt = 1;              // Pin 3 on Uno.
-const uint8_t dataPins[] = { 4, 5,  6,  7,    // High nybble of Atmega 328 PORT-D (Uno PIND).
-                             8, 9, 10, 11 };  // Low nybble of Atmega 328 PORT-B (Uno PINB).
-HardwareSerial& useSerial = Serial;           // Serial port we are using, e.g. Serial on Uno, Serial1 on Mega.
-const uint32_t serialSpeed = 115200;          // 115200 appears good enough to avoid input data overflow.
+const uint8_t feedInterrupt = 3;                            // D3 sync PIN
+const uint8_t dataPins[] = { 6, 4, 5, 7, 8, 9, 10, 11 };    // Data pins from 0 to 7 bit
+HardwareSerial& useSerial = Serial;                         // Serial port we are using
+const uint32_t serialSpeed = 115200;
 
 // How we read a byte from input registers (Atmega PORTs).
 // Note that low value is a hole (1), and high value is no hole (0), so we complement/invert the result (~).
-#define READBYTE() ~(((PIND & 0xf0) >> 4) | ((PINB & 0x0f) << 4))  
+#define READBYTE() (~( \
+  (((PIND >> 6) & 1) << 0) | \
+  (((PIND >> 4) & 1) << 1) | \
+  (((PIND >> 5) & 1) << 2) | \
+  (((PIND >> 7) & 1) << 3) | \
+  (((PINB >> 0) & 1) << 4) | \
+  (((PINB >> 1) & 1) << 5) | \
+  (((PINB >> 2) & 1) << 6) | \
+  (((PINB >> 3) & 1) << 7) \
+))
 
 /**
  * Non-configurable constants and globals.
@@ -92,10 +100,12 @@ void setup () {
   // Use a fast enough speed, too slow increases chance of input data overflow.
   useSerial.begin(serialSpeed);
 
-  // Initialise data input pins. We have external pull-up resistors, so they
-  // are not enabled here.
+  // Initialise sync input pin
+  pinMode(feedInterrupt, INPUT_PULLUP);
+
+  // Initialise data input pins
   for (uint8_t i = 0; i < dataPinsSize; i++) {
-    pinMode(dataPins[i], INPUT);
+    pinMode(dataPins[i], INPUT_PULLUP);
   }
   
   printHelp();
@@ -140,14 +150,14 @@ void dumpInit (uint8_t dumpType) {
   dataFIFO[1] = 0;
   dataFIFO[2] = 0;
   dataSkipNulls = true;
-  attachInterrupt(feedInterrupt, feedSenseISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(feedInterrupt), feedSenseISR, FALLING);
 }
 
 /**
  * Data dump cleanup routine.
  */
 void dumpStop () {
-  detachInterrupt(feedInterrupt);
+  detachInterrupt(digitalPinToInterrupt(feedInterrupt));
   state = STATE_IDLE;
   dump = DUMP_NONE;
   dataAvailable = false;
