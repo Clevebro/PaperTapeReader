@@ -81,6 +81,7 @@ void printHelp () {
     " ?  - This help.\n"
     " h  - Hexdump format. Use \"xxd -r\" to convert to binary.\n"
     " s  - Show current holes under head (debug).\n"
+    " r  - Show sync pin value (debug).\n"
     " t  - Tape-like output with hex, decimal, octal, ASCII.\n"
     " <any key> - Interrupt the current dump.\n"
     "\n"
@@ -329,6 +330,10 @@ void handleInput () {
       break;
     case 't':
       dumpInit(DUMP_TAPE);
+      break;
+    case 'r':
+      useSerial.print("Sync pin: ");
+      useSerial.println(digitalRead(3));
       break;
     case '?':
     default:      
