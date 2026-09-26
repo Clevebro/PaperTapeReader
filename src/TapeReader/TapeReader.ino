@@ -37,6 +37,9 @@ volatile uint8_t data;                        // Byte as read by feedSenseISR().
 volatile bool dataAvailable;                  // Set by feedSenseISR() when new data available, must be cleared when read.
 volatile bool dataOverflow;                   // Set by feedSenseISR() if dataAvailable is still set on next interrupt.
 
+unsigned long prevMillis;                     // For blinking LED while new data is read
+unsigned long currentMillis;
+
 enum State {
   STATE_IDLE,
   STATE_DUMP,
@@ -99,6 +102,9 @@ void printPrompt () {
 void setup () {
   // Use a fast enough speed, too slow increases chance of input data overflow.
   useSerial.begin(serialSpeed);
+
+  // Initialise LED pin
+  pinMode(13, OUTPUT);
 
   // Initialise sync input pin
   pinMode(feedInterrupt, INPUT_PULLUP);
@@ -336,6 +342,9 @@ void handleInput () {
  */
 void loop () {
 
+  // Read the current time for LED blinking
+  currentMillis = millis();
+
   // Check for overflow condition.
   if (dataOverflow) { 
     dumpStop();
@@ -390,11 +399,23 @@ void loop () {
       dataSkipNulls = false;    // From now on all nulls must be dumped.
       dumpData(val);
     }
+
+    // Turn on the LED
+    digitalWrite(13, HIGH);
+    prevMillis = currentMillis;
+
   }
 
   // Check for serial port input.
   if (useSerial.available()) {
     handleInput();
+  }
+
+  // After 100 ms turn off the LED
+  if (currentMillis - prevMillis >= 100) 
+  {
+    prevMillis = currentMillis;
+    digitalWrite(13, LOW);
   }
   
 }
