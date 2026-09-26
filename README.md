@@ -1,18 +1,33 @@
-# PaperTapeReader
-Punched paper tape reader - 3D model and source code.
+# Paper Tape Reader
+Fork of [PaperTapeReader](https://github.com/gav-/PaperTapeReader) created by [Gavin Stewart](https://github.com/gav-). Thank you, Gavin, for the great work and inspiration.
 
-This is a punched paper tape reader that allows tape to be pulled through by 
-hand, using the tape's feed holes as a clock/trigger. The tape can be pulled 
-at any speed as long as it is not allowed to slacken.
+I've created a paper tape reader based on the Arduino Nano that can be connected to a PC via USB as a fully functional device.
 
-![Paper Tape Reader](https://raw.githubusercontent.com/gav-/PaperTapeReader/master/images/11-Tape%20reader%20attached%20to%20Arduino%20Uno.jpg "Paper Tape Reader")
+![Paper Tape Reader](https://raw.githubusercontent.com/Clevebro/PaperTapeReader/refs/heads/master/images/perfboard4.jpeg "Paper Tape Reader")
 
-## Notes
-These are some extra notes off the top of my head:
+[![Paper_Tape_Reader_Video](https://img.youtube.com/vi/Yuy-rlHPrUo/0.jpg)](https://www.youtube.com/watch?v=Yuy-rlHPrUo)
 
-* In the 3D model, the LED emitter hole for the paper tape feed hole is smaller than the rest. This turned out to be a mistake, and the emitter for that hole had to brightened to compensate. It is recommended to modify the "feedHoleRadius" in model/PaperTapeReader.scad to the same as "dataHoleRadius", and export a new .stl from OpenSCAD.
+## Modification
+There are some differences from the original project:
 
-* Setting the correct emitter brightness is important. Ideally it is as bright as possible where the paper still satisfactorily blocks the light where no holes are punched. Test with various resistor values and your own paper tape to get it right.
+* Arduino Nano (soldered to perfboard)
+* INPUT_PULLUP mode for internal pullup resistors instead of external ones
+* LED for data reading indication (blinks each time new data is available)
+* Showing sync pin value for debugging purposes
+* New output format (added binary format, removed octal value)
+* Different order of data pins (due to soldering mistakes)
 
-* I haven't added a schematic, but the wiring should be simple, basically just power the emitters from a 5V out (and an appropriate resistor), and tie the phototransistors to pins 4,5,6,7,8,9,10,11. I used external pull-up resistors on the phototransistors, this was a waste of time as the Arduino Uno has internal pull-ups that can be enabled. The setup() function in src/TapeReader/TapeReader.ino should be changed to enable internal pull-ups.
+## Electrical schematic
 
+* LED scheme
+  
+  ![Led_Scheme](https://raw.githubusercontent.com/Clevebro/PaperTapeReader/refs/heads/master/images/led_scheme.png "Led Scheme")
+
+* Phototransistor scheme
+  
+  ![Pt_Scheme](https://raw.githubusercontent.com/Clevebro/PaperTapeReader/refs/heads/master/images/pt_scheme.png "Pt Scheme")
+
+  > **Note:** R is a pull-up resistor in Arduino Nano (from 20 to 50 kΩ)
+
+## Usage
+Upload the firmware in the Arduino IDE and control the reader through the Serial monitor.
