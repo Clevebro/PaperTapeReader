@@ -3,6 +3,8 @@
  * 
  * @author Gavin Stewart <gavin@stewart.com.au>
  * 20151003
+ * Modified by Evgeny Tolstov <electrotower@gmail.com>
+ * 20260926
  */
 
 #define BUILDSERIAL "20260926"
