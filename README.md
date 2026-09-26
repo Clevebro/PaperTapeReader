@@ -33,3 +33,8 @@ There are some differences from the original project:
 
 ## Usage
 Upload the firmware in the Arduino IDE and control the reader through the Serial monitor.
+
+## Output example
+
+![Example_output](https://raw.githubusercontent.com/Clevebro/PaperTapeReader/refs/heads/master/images/example_output.png "Example output")
+
