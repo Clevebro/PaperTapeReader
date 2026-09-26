@@ -5,6 +5,8 @@ I've created a paper tape reader based on the Arduino Nano that can be connected
 
 ![Paper Tape Reader](https://raw.githubusercontent.com/Clevebro/PaperTapeReader/refs/heads/master/images/perfboard4.jpeg "Paper Tape Reader")
 
+Youtube video:
+
 [![Paper_Tape_Reader_Video](https://img.youtube.com/vi/Yuy-rlHPrUo/0.jpg)](https://www.youtube.com/watch?v=Yuy-rlHPrUo)
 
 ## Modification
