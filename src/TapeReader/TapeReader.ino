@@ -180,7 +180,7 @@ void dumpStop () {
  *  Value to dump to serial port.
  */
 void dumpData (uint8_t val) {
-  char buff[26];      // Note this maximum output buffer size including terminating null!
+  char buff[35];      // Note this maximum output buffer size including terminating null!
   uint8_t pos = 0;    // Cursor position in buffer.
   const char hex[] = "0123456789abcdef";  // Hex translation string.
   #define MAXDUMPCOLUMNS 16               // Number of output columns
@@ -254,28 +254,31 @@ void dumpData (uint8_t val) {
       // Tape edge. (11)
       buff[pos++] = '|';
 
-      // Hex. (14)
+      // Binary (22)
       buff[pos++] = ' ';
+      buff[pos++] = '0';
+      buff[pos++] = 'b';
+      for (int i = 7; i >= 0; i--)
+        buff[pos++] = ((val >> i) & 1) + '0';
+
+      // Hex. (27)
+      buff[pos++] = ' ';
+      buff[pos++] = '0';
+      buff[pos++] = 'x';
       buff[pos++] = hex[val >> 4];
       buff[pos++] = hex[val & 0x0f];
 
-      // Decimal. (18)
+      // Decimal. (31)
       buff[pos++] = ' ';
       buff[pos++] = (val / 100) + '0';
       buff[pos++] = (val % 100 / 10) + '0';
       buff[pos++] = (val % 10) + '0';
 
-      // Octal. (22)
-      buff[pos++] = ' ';
-      buff[pos++] = ((val >> 6) & 7) + '0';
-      buff[pos++] = ((val >> 3) & 7) + '0';
-      buff[pos++] = ((val >> 0) & 7) + '0';
-      
-      // ASCII. (24)
+      // ASCII. (33)
       buff[pos++] = ' ';
       buff[pos++] = (val >= 33 && val <= 126) ? val : '.';
 
-      // Newline. (25)
+      // Newline. (34)
       buff[pos++] = '\n';
       
       break;
